@@ -753,11 +753,7 @@ namespace agsXMPP
                 if (OnSocketError != null)
                     OnSocketError(this, ex);
 
-                // Only cleaneUp Session and raise on close if the stream already has started
-                // if teh stream gets closed because of a socket error we have to raise both errors fo course
-                if (m_StreamStarted) {
-                    CleanupSession();                
-                }
+                CleanupSession();
             }
         }		
 		#endregion
