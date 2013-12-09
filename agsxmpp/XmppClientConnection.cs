@@ -721,8 +721,7 @@ namespace agsXMPP
 		{	
 			base.SocketOnDisconnect(sender);
 
-			if(!m_CleanUpDone)
-				CleanupSession();
+            CleanupSession();
 		}
 
         protected virtual void OnSendingServiceUnavailable(SendingServiceUnavailableEventArgs e)
@@ -756,8 +755,9 @@ namespace agsXMPP
 
                 // Only cleaneUp Session and raise on close if the stream already has started
                 // if teh stream gets closed because of a socket error we have to raise both errors fo course
-                if (m_StreamStarted && !m_CleanUpDone)
+                if (m_StreamStarted) {
                     CleanupSession();                
+                }
             }
         }		
 		#endregion
@@ -1427,8 +1427,7 @@ namespace agsXMPP
 		{
 			base.StreamParserOnStreamEnd(sender, e);			
 			
-			if (!m_CleanUpDone)
-				CleanupSession();
+            CleanupSession();
 		}
 
         public override void StreamParserOnStreamElement(object sender, ElementEventArgs eventArgs)
@@ -1585,8 +1584,7 @@ namespace agsXMPP
 			
 			FireOnError(this, ex);
 
-            if (!m_CleanUpDone)
-                CleanupSession();           
+            CleanupSession();
 		}                
         #endregion
 
@@ -1614,6 +1612,9 @@ namespace agsXMPP
 		/// </summary>
 		private void CleanupSession()
 		{		
+            if (m_CleanUpDone) {
+                return;
+            }
 			m_CleanUpDone = true;
            
             // TODO, check if this is always OK
