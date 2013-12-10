@@ -258,7 +258,6 @@ namespace agsXMPP.Net
                 return false;
             }
 
-			m_SSL = true;
             m_NetworkStream = ssl;
             IsEncrypted = true;
             
