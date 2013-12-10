@@ -61,12 +61,7 @@ namespace agsXMPP.Net
     public class ClientSocket : BaseSocket
     {
         TcpClient _socket;
-#if SSL	
-        SslStream           m_SSLStream;
-#endif
-        NetworkStream m_Stream;
         Stream m_NetworkStream = null;
-
 
         const int BUFFERSIZE = 1024;
         private byte[] m_ReadBuffer = null;
@@ -187,9 +182,7 @@ namespace agsXMPP.Net
                 } else {
                     _socket.Connect(Address, Port);
                 }
-                m_Stream = _socket.GetStream();
-
-                m_NetworkStream = m_Stream;
+                m_NetworkStream = _socket.GetStream();
 
 #if SSL
                 if (m_SSL)
@@ -231,15 +224,15 @@ namespace agsXMPP.Net
 		/// <param name="protocol"></param>		
         private bool InitSSL(SslProtocols protocol)
 		{            
-			m_SSLStream = new SslStream(
-                m_Stream,
+            var ssl = new SslStream(
+                m_NetworkStream,
                 false,
                 new RemoteCertificateValidationCallback(ValidateCertificate),
                 null
                 );			
             try
             {
-                m_SSLStream.AuthenticateAsClient(base.Address, null, protocol, true);
+                ssl.AuthenticateAsClient(base.Address, null, protocol, true);
                 // Display the properties and settings for the authenticated stream.
                 //DisplaySecurityLevel(m_SSLStream);
                 //DisplaySecurityServices(m_SSLStream);
@@ -260,8 +253,8 @@ namespace agsXMPP.Net
                 return false;
             }
 
-            m_NetworkStream = m_SSLStream;
 			m_SSL = true;
+            m_NetworkStream = ssl;
             IsEncrypted = true;
             
             return true;
