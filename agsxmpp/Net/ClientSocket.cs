@@ -90,7 +90,12 @@ namespace agsXMPP.Net
         {
             get { return m_SSL; }
 #if SSL
-			set	{ m_SSL = value; }
+            set {
+                if (_socket != null) {
+                    throw new Exception("activating ssl is only possible before connecting");
+                }
+                m_SSL = value;
+            }
 #endif
         }
 
